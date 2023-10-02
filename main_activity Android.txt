@@ -1,0 +1,74 @@
+package com.example.trabajonumeros;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.ref.ReferenceQueue;
+import java.net.ResponseCache;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText num;
+    private TextView resultado1;
+    private TextView resultado2;
+    private TextView resultado3;
+    private TextView resultado4;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        num=findViewById(R.id.activity_main);
+        resultado1=findViewById(R.id.activity_main);
+        resultado2=findViewById(R.id.activity_main);
+        resultado3=findViewById(R.id.activity_main);
+        resultado4=findViewById(R.id.activity_main);
+
+
+        Button Buscar = findViewById(R.id.Env);
+        bnt.setOnClickListener(new View.OnClickListener(){
+            @Override
+                    public void onClick(View view){
+                buscarNumero("http://192.168.10.13/Clase/buscar.php?Numero="+num.getText()+"");
+            }
+        });
+    }
+
+    private void buscarNumero(String URL){
+        JsonArrayRequest jsonArrayRequest =new JSONArrayRequest(URL, new Response.Listener<JSONArray>(){
+            @Override
+            public void onResponse(JSONArray response){
+                JSONObject jsonObject=null;
+                for(int i=0; i<response.length();i++){
+                    try {
+                        jsonObject=response.getJSONObject(i);
+                        resultado1.setText(jsonObject.getString(name:"resultado1"));
+                        resultado2.setText(jsonObject.getString(name:"resultado2"));
+                        resultado3.setText(jsonObject.getString(name:"resultado3"));
+                        resultado4.setText(jsonObject.getString(name:"resultado4"));
+
+                    }catch (JSONException e){
+                        Toast.makeTex(getApplicationContext(),e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        },new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error){
+                Toast.makeText(getApplicationContext(),text: "ERROR DE CONEXION",Toast.LENGTH_SHORT).show();
+
+            }
+       }
+    });
+    ReferenceQueue requestQueue = Volley.newRequestQueue(context: this);
+    requestQueue.add(jsonArrayResquest);
+}
